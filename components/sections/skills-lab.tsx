@@ -104,15 +104,20 @@ function CircularProgress({ value, label, delay }: { value: number; label: strin
 function PerformanceDashboard() {
   return (
     <div className="bg-card/20 border border-border/40 rounded-2xl p-6 lg:p-8 backdrop-blur-xl">
-      <div className="flex items-center gap-2 mb-8">
-        <Activity className="h-5 w-5 text-section" />
-        <h3 className="text-lg font-bold text-foreground tracking-tight">Performance Architecture</h3>
+      <div className="flex flex-col mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Activity className="h-5 w-5 text-section" />
+          <h3 className="text-lg font-bold text-foreground tracking-tight">Verified Lighthouse Scores</h3>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          These metrics represent real-world diagnostic scores audited via Google Lighthouse, reflecting the architecture's commitment to accessibility and speed.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-8 mb-8">
-        <CircularProgress value={100} label="Performance" delay={0.1} />
-        <CircularProgress value={100} label="Accessibility" delay={0.2} />
-        <CircularProgress value={100} label="Best Practices" delay={0.3} />
+        <CircularProgress value={92} label="Performance" delay={0.1} />
+        <CircularProgress value={96} label="Accessibility" delay={0.2} />
+        <CircularProgress value={96} label="Best Practices" delay={0.3} />
         <CircularProgress value={100} label="SEO" delay={0.4} />
       </div>
 
