@@ -109,20 +109,41 @@ function ProjectCard({ project, index, progress, total }: { project: Project, in
   // Compute the center point for this card (0, 0.5, 1 for 3 cards)
   const center = index / (total - 1);
   
-  const start = center - 0.4;
-  const end = center + 0.4;
+  // Dynamically build strictly increasing input ranges bounded between 0 and 1 to prevent WAAPI crashes
+  const input = [];
+  const scaleOutput = [];
+  const opacityOutput = [];
+  const innerXOutput = [];
+
+  if (center > 0) {
+    input.push(center - 0.4);
+    scaleOutput.push(0.85);
+    opacityOutput.push(0.3);
+    innerXOutput.push(100);
+  }
   
-  // Cover Flow effect: scale and fade based on distance from center, clamped to prevent negative CSS values
-  const scale = useTransform(progress, [start, center, end], [0.85, 1, 0.85], { clamp: true });
-  const opacity = useTransform(progress, [start, center, end], [0.3, 1, 0.3], { clamp: true });
-  const blur = useTransform(progress, [start, center, end], ["blur(8px)", "blur(0px)", "blur(8px)"], { clamp: true });
+  input.push(center);
+  scaleOutput.push(1);
+  opacityOutput.push(1);
+  innerXOutput.push(0);
+
+  if (center < 1) {
+    input.push(center + 0.4);
+    scaleOutput.push(0.85);
+    opacityOutput.push(0.3);
+    innerXOutput.push(-100);
+  }
+  
+  // Cover Flow effect: scale and fade based on distance from center
+  const scale = useTransform(progress, input, scaleOutput, { clamp: true });
+  const opacity = useTransform(progress, input, opacityOutput, { clamp: true });
 
   // Inner parallax effect: content slides slightly horizontally
-  const innerX = useTransform(progress, [start, center, end], [100, 0, -100], { clamp: true });
+  const innerX = useTransform(progress, input, innerXOutput, { clamp: true });
 
   return (
     <motion.div 
-      style={{ scale, opacity, filter: blur }} 
+      style={{ scale, opacity }} 
       className="w-[85vw] max-w-[800px] shrink-0 h-full relative"
     >
       <TiltCard className="w-full h-full">
