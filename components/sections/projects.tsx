@@ -106,8 +106,9 @@ import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 
 function ProjectCard({ project, index, progress, total }: { project: Project, index: number, progress: MotionValue<number>, total: number }) {
-  // Compute the center point for this card (0, 0.5, 1 for 3 cards)
-  const center = index / (total - 1);
+  // Peak at 85% scroll so the last card has time to be read before unpinning
+  // index 0 -> 0, index 1 -> 0.42, index 2 -> 0.84
+  const center = index * 0.42;
   
   // Dynamically build strictly increasing input ranges bounded between 0 and 1 to prevent WAAPI crashes
   const input = [];
@@ -115,8 +116,9 @@ function ProjectCard({ project, index, progress, total }: { project: Project, in
   const opacityOutput = [];
   const innerXOutput = [];
 
-  if (center > 0) {
-    input.push(center - 0.4);
+  const startVal = Math.max(0, center - 0.35);
+  if (startVal < center) {
+    input.push(startVal);
     scaleOutput.push(0.85);
     opacityOutput.push(0.3);
     innerXOutput.push(100);
@@ -127,8 +129,9 @@ function ProjectCard({ project, index, progress, total }: { project: Project, in
   opacityOutput.push(1);
   innerXOutput.push(0);
 
-  if (center < 1) {
-    input.push(center + 0.4);
+  const endVal = Math.min(1, center + 0.35);
+  if (endVal > center) {
+    input.push(endVal);
     scaleOutput.push(0.85);
     opacityOutput.push(0.3);
     innerXOutput.push(-100);
@@ -229,14 +232,14 @@ export function ProjectsSection() {
   });
 
   // Translate X based on scroll progress. 
-  // We have 3 projects. We want to move from 0% to -66% roughly, plus some offset.
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-65%"]);
+  // We move from 0% to -72% to ensure the last card fully enters the center.
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-72%"]);
 
   return (
     <section 
       id="projects" 
       ref={targetRef} 
-      className="relative h-[300vh] bg-card/5 border-t border-border/30 section-projects"
+      className="relative h-[350vh] bg-card/5 border-t border-border/30 section-projects"
     >
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
         <FloatingParticles />
