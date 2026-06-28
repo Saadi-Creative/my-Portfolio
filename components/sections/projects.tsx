@@ -112,13 +112,13 @@ function ProjectCard({ project, index, progress, total }: { project: Project, in
   const start = center - 0.4;
   const end = center + 0.4;
   
-  // Cover Flow effect: scale and fade based on distance from center
-  const scale = useTransform(progress, [start, center, end], [0.85, 1, 0.85]);
-  const opacity = useTransform(progress, [start, center, end], [0.3, 1, 0.3]);
-  const blur = useTransform(progress, [start, center, end], ["blur(8px)", "blur(0px)", "blur(8px)"]);
+  // Cover Flow effect: scale and fade based on distance from center, clamped to prevent negative CSS values
+  const scale = useTransform(progress, [start, center, end], [0.85, 1, 0.85], { clamp: true });
+  const opacity = useTransform(progress, [start, center, end], [0.3, 1, 0.3], { clamp: true });
+  const blur = useTransform(progress, [start, center, end], ["blur(8px)", "blur(0px)", "blur(8px)"], { clamp: true });
 
   // Inner parallax effect: content slides slightly horizontally
-  const innerX = useTransform(progress, [start, center, end], [100, 0, -100]);
+  const innerX = useTransform(progress, [start, center, end], [100, 0, -100], { clamp: true });
 
   return (
     <motion.div 
